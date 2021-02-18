@@ -7,8 +7,8 @@ import random
 xObstaculo = 0.0
 yObstaculo = 0.2
 
-xCarrito = 0.0
-yCarrito = -0.8
+xNave = 0.0
+yNave = -0.8
 
 colisionando = False
 
@@ -16,30 +16,50 @@ def checar_colisiones():
     global colisionando
 
     #Si extremaDerechaCarrito > extremaIzquierdaObstaculo
-    if xCarrito + 0.01 > xObstaculo - 0.15:
+    if yNave + 0.01 <  yObstaculo - 0.15:
         colisionando = True
+        
     else:
         colisionando = False
 
 def actualizar(window):
-    global xCarrito
-    global yCarrito
+    global xNave
+    global yNave
 
-    
+   #------------------------movimiento de la nave-----------------------# 
 
-    estadoIzquierda = glfw.get_key(window, glfw.KEY_LEFT)
-    estadoDerecha = glfw.get_key(window, glfw.KEY_RIGHT)
-    estadoAbajo = glfw.get_key(window, glfw.KEY_DOWN)
-    estadoArriba = glfw.get_key(window, glfw.KEY_UP)
+    estadoIzquierda = glfw.get_key(window, glfw.KEY_LEFT )
+    estadoDerecha = glfw.get_key(window, glfw.KEY_RIGHT )
+    estadoAbajo = glfw.get_key(window, glfw.KEY_DOWN )
+    estadoArriba = glfw.get_key(window, glfw.KEY_UP )
+    estadoIzquierda2 = glfw.get_key(window,  glfw.KEY_A)
+    estadoDerecha2 = glfw.get_key(window,  glfw.KEY_D)
+    estadoAbajo2 = glfw.get_key(window,  glfw.KEY_S)
+    estadoArriba2 = glfw.get_key(window, glfw.KEY_W)
+
+    turboDerecha = glfw.get_key(window, glfw.KEY_L)
+    turboIzquierda = glfw.get_key(window, glfw.KEY_J)
 
     if estadoIzquierda == glfw.PRESS:
-        xCarrito -= 0.01
+        xNave -= 0.01
     if estadoDerecha == glfw.PRESS:
-        xCarrito += 0.01
+        xNave += 0.01
     if estadoAbajo == glfw.PRESS:
-        yCarrito -= 0.01
+        yNave -= 0.01
     if estadoArriba == glfw.PRESS:
-        yCarrito += 0.01
+        yNave += 0.01
+    if estadoIzquierda2 == glfw.PRESS:
+        xNave -= 0.01
+    if estadoDerecha2 == glfw.PRESS:
+        xNave += 0.01
+    if estadoAbajo2 == glfw.PRESS:
+        yNave -= 0.01
+    if estadoArriba2 == glfw.PRESS:
+        yNave += 0.01
+    if turboDerecha == glfw.PRESS:
+        xNave += 0.05
+    if turboIzquierda == glfw.PRESS:
+        xNave -= 0.05
 
     checar_colisiones()
 
@@ -59,12 +79,12 @@ def dibujarObstaculo():
 
     glPopMatrix()
 
-def dibujarCarrito():
-    global xCarrito
-    global yCarrito
+def dibujarNave():
+    global xNave
+    global yNave
 
     glPushMatrix()
-    glTranslate(xCarrito, yCarrito, 0.0)
+    glTranslate(xNave, yNave, 0.0)
     glBegin(GL_TRIANGLES)
 
     if colisionando == True:
@@ -94,8 +114,8 @@ def estrellas():
 
 def dibujar():
     #rutinas de dibujo
-    #dibujarObstaculo()
-    dibujarCarrito()
+    dibujarObstaculo()
+    dibujarNave()
     estrellas()
 
 def main():
