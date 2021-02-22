@@ -66,7 +66,6 @@ def actualizar_bala(tiempo_delta):
     global velocidad
     global obstaculoVivo
     global obstaculoVivo1
-    global ciclo
     global xObstaculo
     global yObstaculo
     global xObstaculo1
@@ -150,6 +149,68 @@ def actualizar(window):
     actualizar_bala(tiempo_delta)
     tiempo_anterior = tiempo_actual
 
+def figuronas():
+
+    a = random.uniform(-0.5,0.5)
+    b = random.uniform(-0.5,0.5)
+    c = random.uniform(-0.5,5)
+
+    glBegin(GL_QUADS)
+    glColor3f(.0, 1.0, .0)
+    glVertex3f(-1,-.9,0)
+    glVertex3f(1,-.9,0)
+    glVertex3f(1,-1,0)
+    glVertex3f(-1,-1,0)
+    glEnd()
+
+    glColor3f(1,1,0)
+    glBegin(GL_TRIANGLES)
+    glVertex3f(-8,-.8,0)
+    glVertex3f(-.85,-0.8,0)
+    glVertex3f(-0.8,-0.75,0)
+    
+    glEnd()
+
+    glColor3f(1,1,0.6)
+    glBegin(GL_TRIANGLES)
+    glVertex3f(-.68,-.5,0)
+    glVertex3f(-.75,-0.5,0)
+    glVertex3f(-0.68,-0.45,0)
+    
+    glEnd()
+
+    glColor3f(1,.1,0.6)
+    glBegin(GL_TRIANGLES)
+    glVertex3f(.68,-.5,0)
+    glVertex3f(.75,-0.5,0)
+    glVertex3f(0.68,-0.65,0)
+    
+    glEnd()
+    glColor3f(.1,.1,0.6)
+    glBegin(GL_TRIANGLES)
+    glVertex3f(.68,-.85,0)
+    glVertex3f(.75,-0.85,0)
+    glVertex3f(0.68,-0.65,0)
+    
+    glEnd()
+    
+    glColor3f(.41,.1,0.6)
+    glBegin(GL_TRIANGLES)
+    glVertex3f(.868,-.5,0)
+    glVertex3f(.875,-0.5,0)
+    glVertex3f(0.868,-0.6,0)
+    
+    glEnd()
+
+    glBegin(GL_QUADS)
+    glColor3f(.50, 1.0, .50)
+    glVertex3f(-.8,.9,0)
+    glVertex3f(-.77,.9,0)
+    glVertex3f(-.77,.8,0)
+    glVertex3f(-.8,.8,0)
+    glEnd()
+
+
 
 
 def dibujarObstaculo():
@@ -160,7 +221,8 @@ def dibujarObstaculo():
         glPushMatrix()
         glTranslate(xObstaculo, yObstaculo, 0.0)
         glBegin(GL_TRIANGLES)
-        glColor3f(0.0, 0.0, 1.0)
+        colores = random.uniform(1,-1)
+        glColor3f(1.0, 0.0, .0)
         glVertex3f(0.0, -0.40, 0.0)
         glVertex3f(0.15, -0.15, 0.0)
         glVertex3f(-0.15, -0.15, 0.0)
@@ -175,7 +237,7 @@ def dibujarObstaculo1():
         glPushMatrix()
         glTranslate(xObstaculo1, yObstaculo1, 0.0)
         glBegin(GL_TRIANGLES)
-        glColor3f(0.0, 0.0, 1.0)
+        glColor3f(1.0, 0.0, .0)
         glVertex3f(0.0, -0.30, 0.0)
         glVertex3f(0.1, -0.1, 0.0)
         glVertex3f(-0.1, -0.1, 0.0)
@@ -212,7 +274,7 @@ def dibujarNave():
     if colisionando == True:
         glColor3f(1.0, 1.0, 1.0)
     else:
-        glColor3f(1.0, 0.0, 0.0)
+        glColor3f(1.0, 1.0, 1.0)
     glVertex3f(0.0, 0.05, 0.0)
     glVertex3f(-0.05, -0.05, 0.0)
     glVertex3f(0.05, -0.05, 0.0)
@@ -240,6 +302,7 @@ def dibujar():
     dibujarObstaculo1()
     dibujarNave()
     dibujar_bala()
+    figuronas()
 
 def key_callback(window, key, scancode, action, mods):
     global disparando
@@ -260,7 +323,7 @@ def main():
     
     #crea la ventana, 
     # independientemente del SO que usemos
-    window = glfw.create_window(1600,1600,"space invaders", None, None)
+    window = glfw.create_window(800,800,"space invaders", None, None)
 
     #Configuramos OpenGL
     glfw.window_hint(glfw.SAMPLES, 4)
