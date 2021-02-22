@@ -132,7 +132,7 @@ def estrellas():
 
 #---------------area de estres mental de como randomizar los enemigos-----------------#
 contador = random.uniform(1,5)
-
+#print("el contador es: " + contador)
 def enemigos(): 
     contador2= contador 
     if contador2 < 5:
