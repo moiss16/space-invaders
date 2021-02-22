@@ -1,4 +1,21 @@
-from OpenGL.GL import *
+try:
+    import OpenGL as ogl
+    try:
+        import OpenGL.GL   # this fails in <=2020 versions of Python on OS X 11.x
+    except ImportError:
+        print('Drat, patching for Big Sur')
+        from ctypes import util
+        orig_util_find_library = util.find_library
+        def new_util_find_library( name ):
+            res = orig_util_find_library( name )
+            if res: return res
+            return '/System/Library/Frameworks/'+name+'.framework/'+name
+        util.find_library = new_util_find_library
+except ImportError:
+    pass
+
+
+
 from glew_wish import *
 import glfw
 import random
@@ -112,11 +129,35 @@ def estrellas():
 
     glEnd()
 
+
+#---------------area de estres mental de como randomizar los enemigos-----------------#
+contador = random.uniform(1,5)
+
+def enemigos(): 
+    contador2= contador 
+    if contador2 < 5:
+        xEnemigos = random.uniform(-1.0,1.0) 
+        yEnemigos = random.uniform(0,1)
+
+        glBegin(GL_TRIANGLES)
+        glVertex3f(xEnemigos, yEnemigos, 0.0)
+        glVertex3f(xEnemigos-0.05, yEnemigos+0.05, 0.0)
+        glVertex3f(xEnemigos+0.05, yEnemigos+0.05, 0.0)
+
+
+        glEnd()
+        contador2 += 1 
+
+
+
 def dibujar():
     #rutinas de dibujo
-    dibujarObstaculo()
+    #dibujarObstaculo()
     dibujarNave()
     estrellas()
+    enemigos()
+
+
 
 def main():
     #inicia glfw
@@ -161,7 +202,7 @@ def main():
 
     while not glfw.window_should_close(window):
         #Establece regiond e dibujo
-        glViewport(0,0,800,800)
+        glViewport(0,0,1600,1600)
         #Establece color de borrado
         glClearColor(0.0,0.0,0.0,1)
         #Borra el contenido de la ventana
