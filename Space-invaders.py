@@ -149,6 +149,23 @@ def actualizar(window):
     actualizar_bala(tiempo_delta)
     tiempo_anterior = tiempo_actual
 
+def dibujarfigura():
+    glBegin(GL_QUADS)
+    glColor3f(0,0.9,1.0)
+    glVertex3f(0.12,-.28,0.0)
+    glVertex3f(0.20,-.28,0.0)
+    glVertex3f(0.20,-.17,0.0)
+    glVertex3f(0.12,-.17,0.0)
+    glEnd()
+
+def dibujarCirculo():
+    glColor3f(.0, 1.0, .0)
+    glBegin(GL_POLYGON)
+    for x in range (360):
+        angulo = x * 3.14159 / 180.0
+        glVertex3f(cos(angulo) * 0.07 -.6, sin(angulo) * 0.07 +.2, 0.0)
+    glEnd()
+
 def figuronas():
 
     a = random.uniform(-0.5,0.5)
@@ -298,11 +315,14 @@ def estrellas():
 def dibujar():
     #rutinas de dibujo
     estrellas()
+    figuronas()
+    dibujarfigura()
+    dibujarCirculo()
     dibujarObstaculo()
     dibujarObstaculo1()
     dibujarNave()
     dibujar_bala()
-    figuronas()
+    
 
 def key_callback(window, key, scancode, action, mods):
     global disparando
@@ -323,7 +343,7 @@ def main():
     
     #crea la ventana, 
     # independientemente del SO que usemos
-    window = glfw.create_window(800,800,"space invaders", None, None)
+    window = glfw.create_window(1600,1600,"space invaders", None, None)
 
     #Configuramos OpenGL
     glfw.window_hint(glfw.SAMPLES, 4)
