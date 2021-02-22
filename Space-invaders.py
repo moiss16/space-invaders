@@ -15,105 +15,207 @@ except ImportError:
     pass
 
 
-
+from OpenGL.GL import *
 from glew_wish import *
 import glfw
+from math import *
 import random
 
+xObstaculo = random.uniform(-.7,.7)
+print('este es el obsta : ' + str(xObstaculo))
+yObstaculo = random.uniform(0,.7)
+print('este es el obsta : ' + str(yObstaculo))
+obstaculoVivo = True
+xObstaculo1 = random.uniform(-.7,.7)
+print('este es el obsta : ' + str(xObstaculo1))
+yObstaculo1 = random.uniform(0,.7)
+print('este es el obsta : ' + str(yObstaculo1))
+obstaculoVivo1 = False
 
-xObstaculo = 0.0
-yObstaculo = 0.2
 
 xNave = 0.0
 yNave = -0.8
 
 colisionando = False
 
-def checar_colisiones():
-    global colisionando
+angulo = 0
+# el desfase es debido a que el triangulo en 0 grados voltea
+# hacia arriba y no hacia la derecha
+desfase = 90
 
-    #Si extremaDerechaCarrito > extremaIzquierdaObstaculo
-    if yNave + 0.01 <  yObstaculo - 0.15:
-        colisionando = True
-        
-    else:
-        colisionando = False
+velocidad = 1
+velocidad_angular = 180
+
+tiempo_anterior = 0
+
+# Indicador si hay "bala" viva o no
+disparando = False
+xBala = 0
+yBala = 0
+
+
+
+
+
+
+def actualizar_bala(tiempo_delta):
+    global disparando
+    global xBala
+    global yBala
+    global anguloBala
+    global velocidad
+    global obstaculoVivo
+    global obstaculoVivo1
+    global ciclo
+    global xObstaculo
+    global yObstaculo
+    global xObstaculo1
+    global yObstaculo1
+    if disparando:
+        if xBala >= 1:
+            disparando = False
+        elif xBala <= -1:
+            disparando = False
+        elif yBala >= 1:
+            disparando = False
+        elif yBala <= -1:
+            disparando = False
+        print("Disparando")
+        yBala = yBala + \
+            (sin((anguloBala + desfase) * 3.14159 / 180) * velocidad * tiempo_delta)
+        xBala = xBala + \
+            (cos((anguloBala + desfase) * 3.14159 / 180) * velocidad * tiempo_delta)
+        # checar colision con obstaculo si sigue "vivo"
+        if obstaculoVivo and xBala + 0.01 > xObstaculo - 0.15 and xBala - 0.01 < xObstaculo + 0.15 and yBala + 0.01 > yObstaculo - 0.15 and yBala - 0.01 < yObstaculo + 0.15:
+           
+            obstaculoVivo = False
+            disparando = False
+            obstaculoVivo1 = True
+
+            xObstaculo1 = random.uniform(-.7,.7)
+
+            yObstaculo1 = random.uniform(0,.7)
+
+
+
+
+        if obstaculoVivo1 and xBala + 0.01 > xObstaculo1 - 0.15 and xBala - 0.01 < xObstaculo1 + 0.15 and yBala + 0.01 > yObstaculo1 - 0.15 and yBala - 0.01 < yObstaculo1 + 0.15:
+         
+            obstaculoVivo1 = False
+            disparando = False
+            obstaculoVivo = True
+
+            xObstaculo = random.uniform(-.7,.7)
+
+            yObstaculo = random.uniform(0,.7)
+
+            
+            
+
+
 
 def actualizar(window):
+    global tiempo_anterior
+    global angulo
     global xNave
     global yNave
 
-   #------------------------movimiento de la nave-----------------------# 
+    tiempo_actual = glfw.get_time()
+    tiempo_delta = tiempo_actual - tiempo_anterior
 
-    estadoIzquierda = glfw.get_key(window, glfw.KEY_LEFT )
-    estadoDerecha = glfw.get_key(window, glfw.KEY_RIGHT )
-    estadoAbajo = glfw.get_key(window, glfw.KEY_DOWN )
-    estadoArriba = glfw.get_key(window, glfw.KEY_UP )
-    estadoIzquierda2 = glfw.get_key(window,  glfw.KEY_A)
-    estadoDerecha2 = glfw.get_key(window,  glfw.KEY_D)
-    estadoAbajo2 = glfw.get_key(window,  glfw.KEY_S)
-    estadoArriba2 = glfw.get_key(window, glfw.KEY_W)
+    estadoIzquierda = glfw.get_key(window, glfw.KEY_LEFT)
+    estadoDerecha = glfw.get_key(window, glfw.KEY_RIGHT)
+    estadoAbajo = glfw.get_key(window, glfw.KEY_DOWN)
+    estadoArriba = glfw.get_key(window, glfw.KEY_UP)
 
-    turboDerecha = glfw.get_key(window, glfw.KEY_L)
-    turboIzquierda = glfw.get_key(window, glfw.KEY_J)
+    if estadoAbajo == glfw.PRESS:
+        yNave -= 0.001
 
     if estadoIzquierda == glfw.PRESS:
-        xNave -= 0.01
+        angulo = angulo + (velocidad_angular * tiempo_delta)
+        if angulo > 360:
+            angulo = 0
     if estadoDerecha == glfw.PRESS:
-        xNave += 0.01
-    if estadoAbajo == glfw.PRESS:
-        yNave -= 0.01
-    if estadoArriba == glfw.PRESS:
-        yNave += 0.01
-    if estadoIzquierda2 == glfw.PRESS:
-        xNave -= 0.01
-    if estadoDerecha2 == glfw.PRESS:
-        xNave += 0.01
-    if estadoAbajo2 == glfw.PRESS:
-        yNave -= 0.01
-    if estadoArriba2 == glfw.PRESS:
-        yNave += 0.01
-    if turboDerecha == glfw.PRESS:
-        xNave += 0.05
-    if turboIzquierda == glfw.PRESS:
-        xNave -= 0.05
+        angulo = angulo - (velocidad_angular * tiempo_delta)
+        if angulo < 0:
+            angulo = 360
 
-    checar_colisiones()
+    if estadoArriba == glfw.PRESS:
+        yNave = yNave + \
+            (sin((angulo + desfase) * 3.14159 / 180) * velocidad * tiempo_delta)
+        xNave = xNave + \
+            (cos((angulo + desfase) * 3.14159 / 180) * velocidad * tiempo_delta)
+
+   
+    actualizar_bala(tiempo_delta)
+    tiempo_anterior = tiempo_actual
+
+
 
 def dibujarObstaculo():
     global xObstaculo
     global yObstaculo
 
-    glPushMatrix()
-    glTranslate(xObstaculo, yObstaculo, 0.0)
-    glBegin(GL_QUADS)
-    glColor(0.0, 0.0, 1.0)
-    glVertex3f(-0.15, 0.15, 0.0)
-    glVertex3f(0.15, 0.15, 0.0)
-    glVertex3f(0.15, -0.15, 0.0)
-    glVertex3f(-0.15, -0.15, 0.0)
-    glEnd()
+    if obstaculoVivo:
+        glPushMatrix()
+        glTranslate(xObstaculo, yObstaculo, 0.0)
+        glBegin(GL_TRIANGLES)
+        glColor3f(0.0, 0.0, 1.0)
+        glVertex3f(0.0, -0.40, 0.0)
+        glVertex3f(0.15, -0.15, 0.0)
+        glVertex3f(-0.15, -0.15, 0.0)
+        glEnd()
+        glPopMatrix()
 
-    glPopMatrix()
+def dibujarObstaculo1():
+    global xObstaculo1
+    global yObstaculo1
+
+    if obstaculoVivo1:
+        glPushMatrix()
+        glTranslate(xObstaculo1, yObstaculo1, 0.0)
+        glBegin(GL_TRIANGLES)
+        glColor3f(0.0, 0.0, 1.0)
+        glVertex3f(0.0, -0.30, 0.0)
+        glVertex3f(0.1, -0.1, 0.0)
+        glVertex3f(-0.1, -0.1, 0.0)
+        glEnd()
+        glPopMatrix()
+
+
+def dibujar_bala():
+    global disparando
+    global xBala
+    global yBala
+    if disparando == True:
+        glPushMatrix()
+        glTranslate(xBala, yBala, 0.0)
+        glRotate(anguloBala, 0.0, 0.0, 1.0)
+        glBegin(GL_QUADS)
+        glColor3f(1.0, 1.0, 1.0)
+        glVertex3f(-0.01, 0.01, 0.0)
+        glVertex3f(0.01, 0.01, 0.0)
+        glVertex3f(0.01, -0.01, 0.0)
+        glVertex3f(-0.01, -0.01, 0.0)
+        glEnd()
+        glPopMatrix()
+
 
 def dibujarNave():
+    global colisionando
     global xNave
     global yNave
-
     glPushMatrix()
     glTranslate(xNave, yNave, 0.0)
+    glRotate(angulo, 0.0, 0.0, 1.0)
     glBegin(GL_TRIANGLES)
-
     if colisionando == True:
-        glColor3f(1, 1, 1)
+        glColor3f(1.0, 1.0, 1.0)
     else:
-        glColor3f(1, 0, 0)
-    
-
+        glColor3f(1.0, 0.0, 0.0)
     glVertex3f(0.0, 0.05, 0.0)
     glVertex3f(-0.05, -0.05, 0.0)
     glVertex3f(0.05, -0.05, 0.0)
-
     glEnd()
     glPopMatrix()
 
@@ -130,34 +232,26 @@ def estrellas():
     glEnd()
 
 
-#---------------area de estres mental de como randomizar los enemigos-----------------#
-contador = random.uniform(1,5)
-#print("el contador es: " + contador)
-def enemigos(): 
-    contador2= contador 
-    if contador2 < 5:
-        xEnemigos = random.uniform(-1.0,1.0) 
-        yEnemigos = random.uniform(0,1)
-
-        glBegin(GL_TRIANGLES)
-        glVertex3f(xEnemigos, yEnemigos, 0.0)
-        glVertex3f(xEnemigos-0.05, yEnemigos+0.05, 0.0)
-        glVertex3f(xEnemigos+0.05, yEnemigos+0.05, 0.0)
-
-
-        glEnd()
-        contador2 += 1 
-
-
 
 def dibujar():
     #rutinas de dibujo
-    #dibujarObstaculo()
-    dibujarNave()
     estrellas()
-    enemigos()
+    dibujarObstaculo()
+    dibujarObstaculo1()
+    dibujarNave()
+    dibujar_bala()
 
-
+def key_callback(window, key, scancode, action, mods):
+    global disparando
+    global anguloBala
+    global xBala
+    global yBala
+    if not disparando and key == glfw.KEY_SPACE and action == glfw.PRESS:
+        disparando = True
+        xBala = xNave
+        yBala = yNave
+        anguloBala = angulo
+        
 
 def main():
     #inicia glfw
@@ -166,7 +260,7 @@ def main():
     
     #crea la ventana, 
     # independientemente del SO que usemos
-    window = glfw.create_window(800,800,"space invaders", None, None)
+    window = glfw.create_window(1600,1600,"space invaders", None, None)
 
     #Configuramos OpenGL
     glfw.window_hint(glfw.SAMPLES, 4)
@@ -197,7 +291,7 @@ def main():
 
     version_shaders = glGetString(GL_SHADING_LANGUAGE_VERSION)
     print(version_shaders)
-
+    glfw.set_key_callback(window, key_callback)
 #-----------------#
 
     while not glfw.window_should_close(window):
