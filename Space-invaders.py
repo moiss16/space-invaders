@@ -151,7 +151,7 @@ def actualizar(window):
 
 def dibujarfigura():
     glBegin(GL_QUADS)
-    glColor3f(0,0.9,1.0)
+    glColor3f(.41,.1,0.6)
     glVertex3f(0.12,-.28,0.0)
     glVertex3f(0.20,-.28,0.0)
     glVertex3f(0.20,-.17,0.0)
@@ -159,11 +159,20 @@ def dibujarfigura():
     glEnd()
 
 def dibujarCirculo():
-    glColor3f(.0, 1.0, .0)
+    glColor3f(.011, .011, .6588)
     glBegin(GL_POLYGON)
     for x in range (360):
         angulo = x * 3.14159 / 180.0
-        glVertex3f(cos(angulo) * 0.07 -.6, sin(angulo) * 0.07 +.2, 0.0)
+        glVertex3f(cos(angulo) * 0.05 -.6, sin(angulo) * 0.05 +.2, 0.0)
+    glEnd()
+
+
+def dibujarCirculo2():
+    glColor3f(0.19, 0.054, 0.27)
+    glBegin(GL_POLYGON)
+    for x in range (360):
+        angulo = x * 3.14159 / 180.0
+        glVertex3f(cos(angulo) * 0.03 +.7, sin(angulo) * 0.03 , 0.0)
     glEnd()
 
 def figuronas():
@@ -173,9 +182,9 @@ def figuronas():
     c = random.uniform(-0.5,5)
 
     glBegin(GL_QUADS)
-    glColor3f(.0, 1.0, .0)
-    glVertex3f(-1,-.9,0)
-    glVertex3f(1,-.9,0)
+    glColor3f(0.19, 0.054, 0.27)
+    glVertex3f(-1,-.7,0)
+    glVertex3f(1,-.7,0)
     glVertex3f(1,-1,0)
     glVertex3f(-1,-1,0)
     glEnd()
@@ -317,6 +326,7 @@ def dibujar():
     estrellas()
     figuronas()
     dibujarfigura()
+    dibujarCirculo2()
     dibujarCirculo()
     dibujarObstaculo()
     dibujarObstaculo1()
