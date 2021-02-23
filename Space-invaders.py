@@ -14,6 +14,7 @@ try:
 except ImportError:
     pass
 
+###---DISPARAR AL OBJETIVO ROJO---###
 
 from OpenGL.GL import *
 from glew_wish import *
@@ -174,6 +175,79 @@ def dibujarCirculo2():
         angulo = x * 3.14159 / 180.0
         glVertex3f(cos(angulo) * 0.03 +.7, sin(angulo) * 0.03 , 0.0)
     glEnd()
+    
+def dibujarPoligono():
+    
+    glBegin(GL_POLYGON)
+    glColor3f(1, 0, 0.7)
+    glVertex(-0.3,-0.3,0.0)
+    glVertex(-0.3,-0.2,0.0)
+    glVertex(-0.25,-0.15,0.0)
+    glVertex(-0.2,-0.2,0.0)
+    glVertex(-0.2,-0.3,0.0)
+    glEnd()
+
+def dibujarTriangulo():
+    glBegin(GL_TRIANGLES)
+    glColor3f(1, 0, 0.7)
+    glVertex3f(-0.85,.1,0)
+    glVertex3f(-0.9,-0.1,0)
+    glVertex3f(-0.85,-0.15,0)
+    glEnd()
+   
+def dibujarCirculo3():
+    glColor3f(1, 0, 0.7)
+    glBegin(GL_POLYGON)
+    for x in range (360):
+        angulo = x * 3.14159 / 180.0
+        glVertex3f(cos(angulo) * 0.03 +.02, sin(angulo) * 0.01 +.07, 0.0)
+    glEnd()
+    
+def dibujarCirculo4():
+    glColor3f(.011, .011, .6588)
+    glBegin(GL_POLYGON)
+    for x in range (360):
+        angulo = x * 3.14159 / 180.0
+        glVertex3f(cos(angulo) * 0.02 +.02, sin(angulo) * 0.08 -.5, 0.0)
+    glEnd()
+    
+def dibujarPoligono2():
+    
+    glBegin(GL_POLYGON)
+    glColor3f(.011, .011, .6588)
+    glVertex(0.4,0.3,0.0)
+    glVertex(0.4,0.2,0.0)
+    glVertex(0.3,0.15,0.0)
+    glVertex(0.3,0.2,0.0)
+    glVertex(0.3,0.3,0.0)
+    glEnd()
+
+def dibujarPoligono3():
+    
+    glBegin(GL_POLYGON)
+    glColor3f(.011, .011, .6588)
+    glVertex(0.4,-0.5,0.0)
+    glVertex(0.4,-0.4,0.0)
+    glVertex(0.6,-0.4,0.0)
+    glVertex(0.6,-0.35,0.0)
+    
+    glEnd()
+
+def dibujarTriangulo3():
+    glBegin(GL_TRIANGLES)
+    glColor3f(1, 0, 0.7)
+    glVertex3f(0.85,.1,0)
+    glVertex3f(0.9,-0.1,0)
+    glVertex3f(0.85,0.15,0)
+    glEnd()
+    
+def dibujarTriangulo4():
+    glBegin(GL_TRIANGLES)
+    glColor3f(1, 0, 0.7)
+    glVertex3f(-0.6,-0.5,0)
+    glVertex3f(-0.4,-0.4,0)
+    glVertex3f(-0.6,-0.4,0)
+    glEnd()
 
 def figuronas():
 
@@ -328,10 +402,19 @@ def dibujar():
     dibujarfigura()
     dibujarCirculo2()
     dibujarCirculo()
+    dibujarPoligono()
+    dibujarTriangulo()
+    dibujarCirculo3()
+    dibujarCirculo4()
+    dibujarPoligono2()
+    dibujarPoligono3()
     dibujarObstaculo()
     dibujarObstaculo1()
     dibujarNave()
     dibujar_bala()
+    dibujarTriangulo3()
+    dibujarTriangulo4()
+    
     
 
 def key_callback(window, key, scancode, action, mods):
