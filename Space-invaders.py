@@ -359,7 +359,7 @@ def main():
 
     while not glfw.window_should_close(window):
         #Establece regiond e dibujo
-        glViewport(0,0,1600,1600)
+        glViewport(0,0,800,800)
         #Establece color de borrado
         glClearColor(0.0,0.0,0.0,1)
         #Borra el contenido de la ventana
