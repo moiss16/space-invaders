@@ -45,11 +45,11 @@ disparando = False
 def inicializarObstaculos():
     global obstaculos
     global obstaculos1
-    obstaculos.append(Obstaculo(random.uniform(-.7,.7), random.uniform(.3,.7)))
-    obstaculos.append(Obstaculo(random.uniform(-.7,.7), random.uniform(.3,.7)))
-    obstaculos.append(Obstaculo(random.uniform(-.7,.7), random.uniform(.3,.7)))
-    obstaculos.append(Obstaculo(random.uniform(-.7,.7), random.uniform(.3,.7)))
-    obstaculos1.append(Obstaculo1(random.uniform(-.7,.7), random.uniform(.3,.7)))
+    obstaculos.append(Obstaculo(random.uniform(-.7,-.3), random.uniform(.3,.7)))
+    obstaculos.append(Obstaculo(random.uniform(-.3,.0), random.uniform(.3,.7)))
+    obstaculos.append(Obstaculo(random.uniform(.0,.3), random.uniform(.3,.7)))
+    obstaculos.append(Obstaculo(random.uniform(.3,.7), random.uniform(.3,.7)))
+    
     
 
 
