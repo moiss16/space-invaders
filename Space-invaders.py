@@ -11,7 +11,8 @@ from Bala import *
 from Carrito import *
 from Obstaculo import *
 from Obstaculo1 import *
-
+from Piso import *
+from Estrellas import *
 
 obstaculos= []
 obstaculos1= []
@@ -22,8 +23,8 @@ obstaculo = Obstaculo(0.4, 0.6)
 obstaculo1 = Obstaculo1(0.4, 0.6)
 segundoObstaculo = Obstaculo(-0.5, 0.3)
 segundoObstaculo1 = Obstaculo1(-0.5, 0.3)
-
-
+piso = Piso()
+estrellas=Estrellas()
 
 colisionando = False
 
@@ -50,10 +51,6 @@ def inicializarObstaculos():
     obstaculos.append(Obstaculo(random.uniform(.0,.3), random.uniform(.3,.7)))
     obstaculos.append(Obstaculo(random.uniform(.3,.7), random.uniform(.3,.7)))
     
-    
-
-
-
 def actualizar(window):
     global tiempo_anterior
     global carrito
@@ -94,7 +91,6 @@ def dibujarCirculo():
         angulo = x * 3.14159 / 180.0
         glVertex3f(cos(angulo) * 0.05 -.6, sin(angulo) * 0.05 +.2, 0.0)
     glEnd()
-
 
 def dibujarCirculo2():
     glColor3f(0.19, 0.054, 0.27)
@@ -238,9 +234,6 @@ def figuronas():
     glVertex3f(-.8,.8,0)
     glEnd()
 
-
-
-
 def dibujarObstaculo():
     global xObstaculo
     global yObstaculo
@@ -274,56 +267,23 @@ def dibujarObstaculo1():
 
 
 
-
-
-def estrellas(): 
-    glPointSize(2)
-    glBegin(GL_POINTS)
-    xrandom = random.uniform(-1.0,1.0) 
-    yrandom = random.uniform(-1.0,1.0) 
-    zrandom = random.random()
-    glColor3f(1, 1, 1)
-    
-    glVertex3d( xrandom, yrandom, zrandom)
-
-    glEnd()
-
-
-
 def dibujar():
     #rutinas de dibujo
     global carrito
     global obstaculos
-  
+    global piso
+    global estrellas
     # rutinas de dibujo
-   
-   
-    estrellas()
-    #figuronas()
-    #dibujarfigura()
-    #dibujarCirculo2()
-    #dibujarCirculo()
-    #dibujarPoligono()
-    #dibujarTriangulo()
-    #dibujarCirculo3()
-    #dibujarCirculo4()
-    #dibujarPoligono2()
-    #dibujarPoligono3()
-    #dibujarObstaculo()
-    #dibujarObstaculo1()
+    
+    estrellas.dibujar()
     for obstaculo in obstaculos:
        obstaculo.dibujar()
     for obstaculo1 in obstaculos1:
        obstaculo1.dibujar()
+    piso.dibujar()
     carrito.dibujar()
 
-  
     
-    #dibujarTriangulo3()
-    #dibujarTriangulo4()
-    
-    
-
 def key_callback(window, key, scancode, action, mods):
     global carrito
     if not carrito.disparando and key == glfw.KEY_SPACE and action == glfw.PRESS:
