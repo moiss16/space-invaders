@@ -5,11 +5,10 @@ from math import *
 import random
 
 
-class Obstaculo:
+class Obstaculo1:
     posicionX = random.uniform(-.7,.7)
     posicionY = random.uniform(0,.7)
-    vivo = True
-    Muerto = False
+    vivo = False
 
     def __init__(self, x, y):
         self.posicionX = x

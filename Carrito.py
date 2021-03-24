@@ -5,6 +5,8 @@ from Bala import *
 
 bala = Bala()
 
+requisito = False
+
 class Carrito():
     posicionX = 0
     posicionY = -0.8 
@@ -80,15 +82,32 @@ class Carrito():
 
     def checar_colisiones(self, obstaculo):
         global bala
+        global requisito
         # Si extremaDerechaCarrito > extremaIzquierdaObstaculo
         # Y extremaIzquierdaCarrito < extremaDerechaObstaculo
         # Y extremoSuperiorCarrito > extremoInferiorObstaculo
         # Y extremoInferiorCarrito < extremoSuperiorObstaculo
         if self.posicionX + 0.05 > obstaculo.posicionX - 0.15 and self.posicionX - 0.05 < obstaculo.posicionX + 0.15 and self.posicionY + 0.05 > obstaculo.posicionY - 0.15 and self.posicionY - 0.05 < obstaculo.posicionY + 0.15:
-            self.colisionando = True
+            self.colisionando = True 
         else:
             self.colisionando = False
 
         if obstaculo.vivo and bala.posicionX + 0.01 > obstaculo.posicionX - 0.15 and bala.posicionX - 0.01 < obstaculo.posicionX + 0.15 and bala.posicionY + 0.01 > obstaculo.posicionY - 0.15 and bala.posicionY - 0.01 < obstaculo.posicionY + 0.15:
            obstaculo.vivo = False
+           requisito = True 
+           self.disparando = False
+    def checar_colisiones1(self, obstaculo1):
+        global bala
+        # Si extremaDerechaCarrito > extremaIzquierdaObstaculo
+        # Y extremaIzquierdaCarrito < extremaDerechaObstaculo
+        # Y extremoSuperiorCarrito > extremoInferiorObstaculo
+        # Y extremoInferiorCarrito < extremoSuperiorObstaculo
+        if self.posicionX + 0.05 > obstaculo1.posicionX - 0.15 and self.posicionX - 0.05 < obstaculo1.posicionX + 0.15 and self.posicionY + 0.05 > obstaculo1.posicionY - 0.15 and self.posicionY - 0.05 < obstaculo1.posicionY + 0.15:
+            self.colisionando = True 
+        else:
+            self.colisionando = False
+
+        if obstaculo1.vivo and bala.posicionX + 0.01 > obstaculo1.posicionX - 0.15 and requisito == True and bala.posicionX - 0.01 < obstaculo1.posicionX + 0.15 and bala.posicionY + 0.01 > obstaculo1.posicionY - 0.15 and bala.posicionY - 0.01 < obstaculo1.posicionY + 0.15:
+           obstaculo1.vivo = True
+         
            self.disparando = False

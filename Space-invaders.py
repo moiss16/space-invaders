@@ -10,24 +10,19 @@ import random
 from Bala import *
 from Carrito import *
 from Obstaculo import *
+from Obstaculo1 import *
+
 
 obstaculos= []
+obstaculos1= []
 
 
 carrito = Carrito()
 obstaculo = Obstaculo(0.4, 0.6)
+obstaculo1 = Obstaculo1(0.4, 0.6)
 segundoObstaculo = Obstaculo(-0.5, 0.3)
+segundoObstaculo1 = Obstaculo1(-0.5, 0.3)
 
-xObstaculo = random.uniform(-.7,.7)
-print('este es el obsta : ' + str(xObstaculo))
-yObstaculo = random.uniform(0,.7)
-print('este es el obsta : ' + str(yObstaculo))
-obstaculoVivo = True
-xObstaculo1 = random.uniform(-.7,.7)
-print('este es el obsta : ' + str(xObstaculo1))
-yObstaculo1 = random.uniform(0,.7)
-print('este es el obsta : ' + str(yObstaculo1))
-obstaculoVivo1 = False
 
 
 colisionando = False
@@ -49,9 +44,12 @@ disparando = False
 
 def inicializarObstaculos():
     global obstaculos
+    global obstaculos1
     obstaculos.append(Obstaculo(random.uniform(-.7,.7), random.uniform(.3,.7)))
     obstaculos.append(Obstaculo(random.uniform(-.7,.7), random.uniform(.3,.7)))
     obstaculos.append(Obstaculo(random.uniform(-.7,.7), random.uniform(.3,.7)))
+    obstaculos.append(Obstaculo(random.uniform(-.7,.7), random.uniform(.3,.7)))
+    obstaculos1.append(Obstaculo1(random.uniform(-.7,.7), random.uniform(.3,.7)))
     
 
 
@@ -60,6 +58,7 @@ def actualizar(window):
     global tiempo_anterior
     global carrito
     global obstaculos
+    global obstaculos1
 
     tiempo_actual = glfw.get_time()
     tiempo_delta = tiempo_actual - tiempo_anterior
@@ -69,6 +68,11 @@ def actualizar(window):
     for obstaculo in obstaculos:
         if obstaculo.vivo:
             carrito.checar_colisiones(obstaculo)
+            if carrito.colisionando:
+                break
+    for obstaculo1 in obstaculos1:
+        if obstaculo1.vivo:
+            carrito.checar_colisiones1(obstaculo1)
             if carrito.colisionando:
                 break
     
@@ -309,6 +313,8 @@ def dibujar():
     #dibujarObstaculo1()
     for obstaculo in obstaculos:
        obstaculo.dibujar()
+    for obstaculo1 in obstaculos1:
+       obstaculo1.dibujar()
     carrito.dibujar()
 
   
