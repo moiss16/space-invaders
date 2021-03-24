@@ -1,25 +1,22 @@
-try:
-    import OpenGL as ogl
-    try:
-        import OpenGL.GL   # this fails in <=2020 versions of Python on OS X 11.x
-    except ImportError:
-        print('Drat, patching for Big Sur')
-        from ctypes import util
-        orig_util_find_library = util.find_library
-        def new_util_find_library( name ):
-            res = orig_util_find_library( name )
-            if res: return res
-            return '/System/Library/Frameworks/'+name+'.framework/'+name
-        util.find_library = new_util_find_library
-except ImportError:
-    pass
 
+
+###---DISPARAR AL OBJETIVO ROJO---###
 
 from OpenGL.GL import *
 from glew_wish import *
 import glfw
 from math import *
 import random
+from Bala import *
+from Carrito import *
+from Obstaculo import *
+
+obstaculos= []
+
+
+carrito = Carrito()
+obstaculo = Obstaculo(0.4, 0.6)
+segundoObstaculo = Obstaculo(-0.5, 0.3)
 
 xObstaculo = random.uniform(-.7,.7)
 print('este es el obsta : ' + str(xObstaculo))
@@ -33,121 +30,148 @@ print('este es el obsta : ' + str(yObstaculo1))
 obstaculoVivo1 = False
 
 
-xNave = 0.0
-yNave = -0.8
-
 colisionando = False
 
 angulo = 0
 # el desfase es debido a que el triangulo en 0 grados voltea
 # hacia arriba y no hacia la derecha
-desfase = 90
 
-velocidad = 1
+
+
 velocidad_angular = 180
 
 tiempo_anterior = 0
 
 # Indicador si hay "bala" viva o no
 disparando = False
-xBala = 0
-yBala = 0
 
 
 
-
-
-
-def actualizar_bala(tiempo_delta):
-    global disparando
-    global xBala
-    global yBala
-    global anguloBala
-    global velocidad
-    global obstaculoVivo
-    global obstaculoVivo1
-    global xObstaculo
-    global yObstaculo
-    global xObstaculo1
-    global yObstaculo1
-    if disparando:
-        if xBala >= 1:
-            disparando = False
-        elif xBala <= -1:
-            disparando = False
-        elif yBala >= 1:
-            disparando = False
-        elif yBala <= -1:
-            disparando = False
-        print("Disparando")
-        yBala = yBala + \
-            (sin((anguloBala + desfase) * 3.14159 / 180) * velocidad * tiempo_delta)
-        xBala = xBala + \
-            (cos((anguloBala + desfase) * 3.14159 / 180) * velocidad * tiempo_delta)
-        # checar colision con obstaculo si sigue "vivo"
-        if obstaculoVivo and xBala + 0.01 > xObstaculo - 0.15 and xBala - 0.01 < xObstaculo + 0.15 and yBala + 0.01 > yObstaculo - 0.15 and yBala - 0.01 < yObstaculo + 0.15:
-           
-            obstaculoVivo = False
-            disparando = False
-            obstaculoVivo1 = True
-
-            xObstaculo1 = random.uniform(-.7,.7)
-
-            yObstaculo1 = random.uniform(0,.7)
-
-
-
-
-        if obstaculoVivo1 and xBala + 0.01 > xObstaculo1 - 0.15 and xBala - 0.01 < xObstaculo1 + 0.15 and yBala + 0.01 > yObstaculo1 - 0.15 and yBala - 0.01 < yObstaculo1 + 0.15:
-         
-            obstaculoVivo1 = False
-            disparando = False
-            obstaculoVivo = True
-
-            xObstaculo = random.uniform(-.7,.7)
-
-            yObstaculo = random.uniform(0,.7)
-
-            
-            
+def inicializarObstaculos():
+    global obstaculos
+    obstaculos.append(Obstaculo(random.uniform(-.7,.7), random.uniform(.3,.7)))
+    obstaculos.append(Obstaculo(random.uniform(-.7,.7), random.uniform(.3,.7)))
+    obstaculos.append(Obstaculo(random.uniform(-.7,.7), random.uniform(.3,.7)))
+    
 
 
 
 def actualizar(window):
     global tiempo_anterior
-    global angulo
-    global xNave
-    global yNave
+    global carrito
+    global obstaculos
 
     tiempo_actual = glfw.get_time()
     tiempo_delta = tiempo_actual - tiempo_anterior
 
-    estadoIzquierda = glfw.get_key(window, glfw.KEY_LEFT)
-    estadoDerecha = glfw.get_key(window, glfw.KEY_RIGHT)
-    estadoAbajo = glfw.get_key(window, glfw.KEY_DOWN)
-    estadoArriba = glfw.get_key(window, glfw.KEY_UP)
+    carrito.actualizar(window, tiempo_delta)
 
-    if estadoAbajo == glfw.PRESS:
-        yNave -= 0.001
-
-    if estadoIzquierda == glfw.PRESS:
-        angulo = angulo + (velocidad_angular * tiempo_delta)
-        if angulo > 360:
-            angulo = 0
-    if estadoDerecha == glfw.PRESS:
-        angulo = angulo - (velocidad_angular * tiempo_delta)
-        if angulo < 0:
-            angulo = 360
-
-    if estadoArriba == glfw.PRESS:
-        yNave = yNave + \
-            (sin((angulo + desfase) * 3.14159 / 180) * velocidad * tiempo_delta)
-        xNave = xNave + \
-            (cos((angulo + desfase) * 3.14159 / 180) * velocidad * tiempo_delta)
-
-   
-    actualizar_bala(tiempo_delta)
+    for obstaculo in obstaculos:
+        if obstaculo.vivo:
+            carrito.checar_colisiones(obstaculo)
+            if carrito.colisionando:
+                break
+    
     tiempo_anterior = tiempo_actual
+
+def dibujarfigura():
+    glBegin(GL_QUADS)
+    glColor3f(.41,.1,0.6)
+    glVertex3f(0.12,-.28,0.0)
+    glVertex3f(0.20,-.28,0.0)
+    glVertex3f(0.20,-.17,0.0)
+    glVertex3f(0.12,-.17,0.0)
+    glEnd()
+
+def dibujarCirculo():
+    glColor3f(.011, .011, .6588)
+    glBegin(GL_POLYGON)
+    for x in range (360):
+        angulo = x * 3.14159 / 180.0
+        glVertex3f(cos(angulo) * 0.05 -.6, sin(angulo) * 0.05 +.2, 0.0)
+    glEnd()
+
+
+def dibujarCirculo2():
+    glColor3f(0.19, 0.054, 0.27)
+    glBegin(GL_POLYGON)
+    for x in range (360):
+        angulo = x * 3.14159 / 180.0
+        glVertex3f(cos(angulo) * 0.03 +.7, sin(angulo) * 0.03 , 0.0)
+    glEnd()
+    
+def dibujarPoligono():
+    
+    glBegin(GL_POLYGON)
+    glColor3f(1, 0, 0.7)
+    glVertex(-0.3,-0.3,0.0)
+    glVertex(-0.3,-0.2,0.0)
+    glVertex(-0.25,-0.15,0.0)
+    glVertex(-0.2,-0.2,0.0)
+    glVertex(-0.2,-0.3,0.0)
+    glEnd()
+
+def dibujarTriangulo():
+    glBegin(GL_TRIANGLES)
+    glColor3f(1, 0, 0.7)
+    glVertex3f(-0.85,.1,0)
+    glVertex3f(-0.9,-0.1,0)
+    glVertex3f(-0.85,-0.15,0)
+    glEnd()
+   
+def dibujarCirculo3():
+    glColor3f(1, 0, 0.7)
+    glBegin(GL_POLYGON)
+    for x in range (360):
+        angulo = x * 3.14159 / 180.0
+        glVertex3f(cos(angulo) * 0.03 +.02, sin(angulo) * 0.01 +.07, 0.0)
+    glEnd()
+    
+def dibujarCirculo4():
+    glColor3f(.011, .011, .6588)
+    glBegin(GL_POLYGON)
+    for x in range (360):
+        angulo = x * 3.14159 / 180.0
+        glVertex3f(cos(angulo) * 0.02 +.02, sin(angulo) * 0.08 -.5, 0.0)
+    glEnd()
+    
+def dibujarPoligono2():
+    
+    glBegin(GL_POLYGON)
+    glColor3f(.011, .011, .6588)
+    glVertex(0.4,0.3,0.0)
+    glVertex(0.4,0.2,0.0)
+    glVertex(0.3,0.15,0.0)
+    glVertex(0.3,0.2,0.0)
+    glVertex(0.3,0.3,0.0)
+    glEnd()
+
+def dibujarPoligono3():
+    
+    glBegin(GL_POLYGON)
+    glColor3f(.011, .011, .6588)
+    glVertex(0.4,-0.5,0.0)
+    glVertex(0.4,-0.4,0.0)
+    glVertex(0.6,-0.4,0.0)
+    glVertex(0.6,-0.35,0.0)
+    
+    glEnd()
+
+def dibujarTriangulo3():
+    glBegin(GL_TRIANGLES)
+    glColor3f(1, 0, 0.7)
+    glVertex3f(0.85,.1,0)
+    glVertex3f(0.9,-0.1,0)
+    glVertex3f(0.85,0.15,0)
+    glEnd()
+    
+def dibujarTriangulo4():
+    glBegin(GL_TRIANGLES)
+    glColor3f(1, 0, 0.7)
+    glVertex3f(-0.6,-0.5,0)
+    glVertex3f(-0.4,-0.4,0)
+    glVertex3f(-0.6,-0.4,0)
+    glEnd()
 
 def figuronas():
 
@@ -156,9 +180,9 @@ def figuronas():
     c = random.uniform(-0.5,5)
 
     glBegin(GL_QUADS)
-    glColor3f(.0, 1.0, .0)
-    glVertex3f(-1,-.9,0)
-    glVertex3f(1,-.9,0)
+    glColor3f(0.19, 0.054, 0.27)
+    glVertex3f(-1,-.7,0)
+    glVertex3f(1,-.7,0)
     glVertex3f(1,-1,0)
     glVertex3f(-1,-1,0)
     glEnd()
@@ -245,41 +269,8 @@ def dibujarObstaculo1():
         glPopMatrix()
 
 
-def dibujar_bala():
-    global disparando
-    global xBala
-    global yBala
-    if disparando == True:
-        glPushMatrix()
-        glTranslate(xBala, yBala, 0.0)
-        glRotate(anguloBala, 0.0, 0.0, 1.0)
-        glBegin(GL_QUADS)
-        glColor3f(1.0, 1.0, 1.0)
-        glVertex3f(-0.01, 0.01, 0.0)
-        glVertex3f(0.01, 0.01, 0.0)
-        glVertex3f(0.01, -0.01, 0.0)
-        glVertex3f(-0.01, -0.01, 0.0)
-        glEnd()
-        glPopMatrix()
 
 
-def dibujarNave():
-    global colisionando
-    global xNave
-    global yNave
-    glPushMatrix()
-    glTranslate(xNave, yNave, 0.0)
-    glRotate(angulo, 0.0, 0.0, 1.0)
-    glBegin(GL_TRIANGLES)
-    if colisionando == True:
-        glColor3f(1.0, 1.0, 1.0)
-    else:
-        glColor3f(1.0, 1.0, 1.0)
-    glVertex3f(0.0, 0.05, 0.0)
-    glVertex3f(-0.05, -0.05, 0.0)
-    glVertex3f(0.05, -0.05, 0.0)
-    glEnd()
-    glPopMatrix()
 
 def estrellas(): 
     glPointSize(2)
@@ -297,23 +288,40 @@ def estrellas():
 
 def dibujar():
     #rutinas de dibujo
+    global carrito
+    global obstaculos
+  
+    # rutinas de dibujo
+   
+   
     estrellas()
-    dibujarObstaculo()
-    dibujarObstaculo1()
-    dibujarNave()
-    dibujar_bala()
-    figuronas()
+    #figuronas()
+    #dibujarfigura()
+    #dibujarCirculo2()
+    #dibujarCirculo()
+    #dibujarPoligono()
+    #dibujarTriangulo()
+    #dibujarCirculo3()
+    #dibujarCirculo4()
+    #dibujarPoligono2()
+    #dibujarPoligono3()
+    #dibujarObstaculo()
+    #dibujarObstaculo1()
+    for obstaculo in obstaculos:
+       obstaculo.dibujar()
+    carrito.dibujar()
+
+  
+    
+    #dibujarTriangulo3()
+    #dibujarTriangulo4()
+    
+    
 
 def key_callback(window, key, scancode, action, mods):
-    global disparando
-    global anguloBala
-    global xBala
-    global yBala
-    if not disparando and key == glfw.KEY_SPACE and action == glfw.PRESS:
-        disparando = True
-        xBala = xNave
-        yBala = yNave
-        anguloBala = angulo
+    global carrito
+    if not carrito.disparando and key == glfw.KEY_SPACE and action == glfw.PRESS:
+        carrito.disparar()
         
 
 def main():
@@ -356,6 +364,7 @@ def main():
     print(version_shaders)
     glfw.set_key_callback(window, key_callback)
 #-----------------#
+    inicializarObstaculos()
 
     while not glfw.window_should_close(window):
         #Establece regiond e dibujo
